@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -64,38 +65,18 @@ namespace ServerForm
         {
 
             clientID = (Button)sender;
-            client_ID = int.Parse(clientID.Name);
-            server.SearchFiles(int.Parse(clientID.Name));
-            for (int i = 0; i < btns_Clients.Count; i++)
+            initBtns(clientID);
+            Icon ic;
+            for (int i = 0; i < clients_apps_Btn.Count(); i++)
             {
-                btns_Clients[i].Visible = false;
-            }
-            if (server.tmp_cool.Count != 0)
-            {
-                int x = 0;
-                int y = 0;
-                int i = 0;
-                foreach (var item in server.tmp_cool)
+                if (!server.tmp_cool[i].EndsWith("desktop.ini"))
                 {
-                    
-                    if (i % 6 == 0)
-                    {
-                        y += 50;
-                        x = 20;
-                    }
-                    clients_apps_Btn.Add(new Button()
-                    {
-                        Size = new Size(100, 50),
-                        Location = new Point(x += 100, y),
-                        Text = item,
-                        Name = i.ToString(),
-                    });
-
-                    clients_apps_Btn[i].Click += Apps_Click;
-                    i++;
+                    ic = Icon.ExtractAssociatedIcon(server.tmp_cool[i]);
+                    clients_apps_Btn[i].BackgroundImage = ic.ToBitmap();
+                    clients_apps_Btn[i].BackgroundImageLayout = ImageLayout.Stretch;
                 }
+                
             }
-
             for (int j = 0; j < clients_apps_Btn.Count; j++)
             {
                 Controls.Add(clients_apps_Btn[j]);
@@ -113,5 +94,40 @@ namespace ServerForm
         private List<Button> clients_apps_Btn = new List<Button>();
         private Button clientID = new Button();
         private Button client_app = new Button();
+        public void initBtns(Button client)
+        {
+            client_ID = int.Parse(clientID.Name);
+            server.SearchFiles(int.Parse(clientID.Name));
+            for (int i = 0; i < btns_Clients.Count; i++)
+            {
+                btns_Clients[i].Visible = false;
+            }
+            if (server.tmp_cool.Count != 0)
+            {
+                int x = 0;
+                int y = 0;
+                int i = 0;
+                foreach (var item in server.tmp_cool)
+                {
+
+                    if (i % 6 == 0)
+                    {
+                        y += 50;
+                        x = 20;
+                    }
+                    clients_apps_Btn.Add(new Button()
+                    {
+                        Size = new Size(100, 50),
+                        Location = new Point(x += 100, y),
+                        Text = Path.GetFileName(item),
+                        Name = i.ToString(),
+                    });
+
+                    clients_apps_Btn[i].Click += Apps_Click;
+                    i++;
+                }
+
+            }
+        }
     }
 }

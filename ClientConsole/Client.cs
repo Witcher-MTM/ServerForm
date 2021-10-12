@@ -73,7 +73,7 @@ namespace ClientProject
             byte[] data = new byte[256];
             foreach (var item in sms)
             {
-                data = Encoding.Unicode.GetBytes(outstr += $"{Path.GetFileName(item)}\n");
+                data = Encoding.Unicode.GetBytes(outstr += $"{item}\n");
             }
 
 
