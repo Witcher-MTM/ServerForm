@@ -54,21 +54,36 @@ namespace ServerForm
 
         private void Clients_Click(object sender, EventArgs e)
         {
-            Button b = (Button)sender;
+            clientID = (Button)sender;
             
-            server.SearchFiles(int.Parse(b.Name));
+            server.SearchFiles(int.Parse(clientID.Name));
             if (server.tmp_cool.Count != 0)
             {
-                this.Controls.Add(new ListBox()
+                client_apps.Items.Clear();
+                foreach (var item in server.tmp_cool)
                 {
-                    Name = "test",
-                    Text =""
-                });
+                    client_apps.Items.Add(item);
+                }
+               
 
             }
 
         }
 
         private List<Button> btns_Clients = new List<Button>();
+
+        private void StartProcess_Click(object sender, EventArgs e)
+        {
+            server.SendProcess(this.client_apps.SelectedItem.ToString(), int.Parse(clientID.Name));
+        }
+
+        private void client_apps_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (this.client_apps.SelectedIndex >= 0)
+            {
+                this.StartProcess.Visible = true;
+            }
+        }
+        private Button clientID = new Button();
     }
 }

@@ -316,6 +316,7 @@ namespace ServerProject
         }
         public void SearchFiles(int ID_choice)
         {
+            this.tmp_cool = new List<string>();
             string tmp = String.Empty;
             lock (clients)
             {
@@ -329,19 +330,18 @@ namespace ServerProject
 
 
                 }
-                string[] words = tmp.Split('\n');
+                tmp_cool = tmp.Split('\n').ToList();
+               
 
-                tmp_cool.AddRange(words);
-
-                try
-                {
-                    SendProcess(words[int.Parse(Console.ReadLine())], ID_choice);
-                    //Console.WriteLine(GetMsg().ToString());
-                }
-                catch (Exception ex)
-                {
-                    //Console.WriteLine(ex.Message);
-                }
+                //try
+                //{
+                //    SendProcess(words[int.Parse(Console.ReadLine())], ID_choice);
+                //    //Console.WriteLine(GetMsg().ToString());
+                //}
+                //catch (Exception ex)
+                //{
+                //    //Console.WriteLine(ex.Message);
+                //}
 
             }
         }
