@@ -14,6 +14,7 @@ namespace ServerForm
 {
     public partial class Form1 : Form
     {
+        int client_ID = 0;
         Server server = new Server();
         public Form1()
         {
@@ -22,7 +23,7 @@ namespace ServerForm
             Task.Factory.StartNew(() => server.Connects());
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void seeClients_Click(object sender, EventArgs e)
         {
           
             if (server.clients.Count == 0)
@@ -31,59 +32,86 @@ namespace ServerForm
             }
             else
             {
-                int x = button1.Location.X+button1.Width;
-                int y = 40;
+                int x = 0;
+                int y = 0;
                 for (int i = 0; i < server.clients.Count; i++)
                 {
-                    btns_Clients.Add(new Button());
-                    this.btns_Clients[i] = new Button();
-                    this.btns_Clients[i].Size = new Size(x, y);
-                    this.btns_Clients[i].Location = new Point(x*i);
-                    this.btns_Clients[i].Text = $"{server.Client_ID} - {server.socketclient.Connected}";
-                    this.btns_Clients[i].Name = i.ToString();
-                    this.btns_Clients[i].Click += Clients_Click;
+                   
+                    if (i % 3 == 0)
+                    {
+                        y += 50;
+                        x = 20;
+                    }
+                         btns_Clients.Add(new Button() {
+                        Size = new Size(100,50),
+                        Location = new Point(x+=100, y),
+                        Text = $"<ID>[{i}]" + "-" + $"{server.socketclient.Connected}",
+                        Name = i.ToString(),
+                });
 
+                    btns_Clients[i].Click += Clients_Click;
                 }
                 for (int i = 0; i < btns_Clients.Count; i++)
                 {
                     Controls.Add(btns_Clients[i]);
                 }
-                button1.Visible = false;
+                SeeClientsBtn.Visible = false;
+                BackBtn.Visible = true;
             }
         }
 
         private void Clients_Click(object sender, EventArgs e)
         {
+
             clientID = (Button)sender;
-            
+            client_ID = int.Parse(clientID.Name);
             server.SearchFiles(int.Parse(clientID.Name));
+            for (int i = 0; i < btns_Clients.Count; i++)
+            {
+                btns_Clients[i].Visible = false;
+            }
             if (server.tmp_cool.Count != 0)
             {
-                client_apps.Items.Clear();
+                int x = 0;
+                int y = 0;
+                int i = 0;
                 foreach (var item in server.tmp_cool)
                 {
-                    client_apps.Items.Add(item);
-                }
-               
+                    
+                    if (i % 6 == 0)
+                    {
+                        y += 50;
+                        x = 20;
+                    }
+                    clients_apps_Btn.Add(new Button()
+                    {
+                        Size = new Size(100, 50),
+                        Location = new Point(x += 100, y),
+                        Text = item,
+                        Name = i.ToString(),
+                    });
 
+                    clients_apps_Btn[i].Click += Apps_Click;
+                    i++;
+                }
             }
 
+            for (int j = 0; j < clients_apps_Btn.Count; j++)
+            {
+                Controls.Add(clients_apps_Btn[j]);
+            }
+
+        }
+
+        private void Apps_Click(object sender, EventArgs e)
+        {
+            client_app = (Button)sender;
+            server.SendProcess(client_app.Text, client_ID);
         }
 
         private List<Button> btns_Clients = new List<Button>();
-
-        private void StartProcess_Click(object sender, EventArgs e)
-        {
-            server.SendProcess(this.client_apps.SelectedItem.ToString(), int.Parse(clientID.Name));
-        }
-
-        private void client_apps_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (this.client_apps.SelectedIndex >= 0)
-            {
-                this.StartProcess.Visible = true;
-            }
-        }
+        private List<Button> clients_apps_Btn = new List<Button>();
         private Button clientID = new Button();
+        private Button client_app = new Button();
     }
 }

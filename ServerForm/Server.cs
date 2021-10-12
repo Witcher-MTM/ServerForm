@@ -80,7 +80,7 @@ namespace ServerProject
             }
 
         }
-        public StringBuilder GetMsg()
+        public StringBuilder GetMsgAll()
         {
 
             StringBuilder builder = new StringBuilder();
@@ -96,6 +96,23 @@ namespace ServerProject
                     builder.Append(Encoding.Unicode.GetString(data, 0, bytes));
                 } while (item.socket.Available > 0);
             }
+
+            return builder;
+        }
+        public StringBuilder GetMsgFromOne(int ClientID)
+        {
+
+            StringBuilder builder = new StringBuilder();
+            int bytes = 0;
+            byte[] data = new byte[256];
+              do
+                {
+
+                    bytes = clients[ClientID].socket.Receive(data);
+
+                    builder.Append(Encoding.Unicode.GetString(data, 0, bytes));
+                } while (clients[ClientID].socket.Available > 0);
+          
 
             return builder;
         }
@@ -323,15 +340,22 @@ namespace ServerProject
                 try
                 {
                     SendMsg("search\n", ID_choice);
-                    tmp = GetMsg().ToString();
+                    tmp = GetMsgFromOne(ID_choice).ToString();
                 }
                 catch (Exception)
                 {
 
 
                 }
-                tmp_cool = tmp.Split('\n').ToList();
                
+                tmp_cool = tmp.Split('\n').ToList();
+                for (int i = 0; i < tmp_cool.Count; i++)
+                {
+                    if (tmp_cool[i] == "")
+                    {
+                        tmp_cool.Remove(tmp_cool[i]);
+                    }
+                }
 
                 //try
                 //{
