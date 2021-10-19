@@ -2,8 +2,9 @@
 using System;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using ClientConsole;
 namespace ClientProject
 {
     class ClientProgram
@@ -12,18 +13,21 @@ namespace ClientProject
         {
           
             Client client = new Client();
-         
+            JsonData json = new JsonData();
+
+            client.json = JsonSerializer.Serialize<JsonData>(json);
             client.Connect();
+          
 
 
 
 
             while (true)
             {
-
                 client.GetServerCommand(client.GetMsg());
-
             }
+
+
 
 
         }

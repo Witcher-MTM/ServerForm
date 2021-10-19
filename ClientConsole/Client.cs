@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using System.Text.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,22 +9,26 @@ using System.Net.Sockets;
 using System.Security.AccessControl;
 using System.Security.Permissions;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading;
 
 namespace ClientProject
 {
     public class Client
     {
+       
         public int ID;
         public string ipAddr;
         public int port;
         public IPEndPoint iPEndPoint;
         public Socket socket;
+        public string json;
         public Client()
         {
             this.ID++;
             this.socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             this.iPEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8000);
+            this.json = String.Empty;
         }
         public Client(Socket socket)
         {
@@ -142,6 +147,10 @@ namespace ClientProject
             {
                 ChangeSize(arr_command);
             }
+            if(arr_command[0].ToLower() == "json")
+            {
+                SendMsg(json);
+            }
             //else
             //{
             //    if (Directory.Exists(command.ToString()))
@@ -220,6 +229,6 @@ namespace ClientProject
             Console.BufferHeight = int.Parse(newKey.GetValue("HEIGHT").ToString());
 
         }
-
+       
     }
 }

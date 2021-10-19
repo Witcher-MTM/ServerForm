@@ -10,11 +10,14 @@ using System.Threading;
 using System.Diagnostics;
 using Microsoft.Win32;
 using System.Windows.Forms;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using ServerForm;
 namespace ServerProject
 {
     class Server
     {
+       
         public int Client_ID;
         private string ipAddr;
         private int port;
@@ -23,6 +26,9 @@ namespace ServerProject
         public Socket socketclient;
         public List<Client> clients;
         public List<string> tmp_cool;
+        public JsonData json;
+
+       
 
         public Server()
         {
@@ -33,6 +39,7 @@ namespace ServerProject
             this.socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             this.clients = new List<Client>();
             this.tmp_cool = new List<string>();
+            this.json = new JsonData();
 
         }
         public void StartServer()
@@ -106,14 +113,14 @@ namespace ServerProject
             int bytes = 0;
             byte[] data = new byte[256];
               do
-                {
+              {
 
                     bytes = clients[ClientID].socket.Receive(data);
 
                     builder.Append(Encoding.Unicode.GetString(data, 0, bytes));
-                } while (clients[ClientID].socket.Available > 0);
-          
+              } while (clients[ClientID].socket.Available > 0);
 
+            json = JsonSerializer.Deserialize<JsonData>(builder.ToString());
             return builder;
         }
         public void SendMsg(string message)
@@ -140,46 +147,16 @@ namespace ServerProject
         }
         public void SendCommand(int choice)
         {
-            Console.Clear();
-
             int ID_choice = 0;
-            bool check = false;
 
-            Exception exception = new Exception();
-            if (clients.Count <= 0)
-            {
-                //Console.Clear();
-                //Console.WriteLine("Wait for connection!");
-                Thread.Sleep(1000);
-            }
-            else
-            {
-                do
-                {
-                    ShowAllClients();
-                   // Console.WriteLine("Choice ID");
-                    try
-                    {
-                        ID_choice = int.Parse(Console.ReadLine());
-
-                        check = true;
-                    }
-                    catch (Exception)
-                    {
-
-                        check = false;
-                       // Console.Clear();
-                    }
-                } while (!check);
-              //  Console.Clear();
+           
+               
                 switch (choice)
                 {
 
                     case 1:
                         {
                             StartBrowser(ID_choice);
-                           // Console.WriteLine(GetMsg().ToString());
-                            Thread.Sleep(1000);
                             break;
                         }
                     case 2:
@@ -198,72 +175,14 @@ namespace ServerProject
                         }
                     case 4:
                         {
-                            string size = String.Empty;
-                           // Console.WriteLine("[1]Change console size\n[2]Change ip adress");
-                            try
-                            {
-                                switch (int.Parse(Console.ReadLine()))
-                                {
-                                    case 1:
-                                        {
-                                           // Console.WriteLine("Enter new console size");
-                                           // Console.WriteLine("[WIDTH]");
-                                            size += Console.ReadLine();
-
-                                           // Console.WriteLine("[HEIGHT]");
-                                            size += "\n" + Console.ReadLine();
-                                            foreach (var item in size.Split('\n'))
-                                            {
-                                                try
-                                                {
-                                                    if (int.Parse(item) > Console.LargestWindowHeight || int.Parse(item) > Console.LargestWindowWidth && int.Parse(item) < Console.LargestWindowHeight || int.Parse(item) < Console.LargestWindowWidth)
-                                                    {
-                                                       // Console.WriteLine("Too higth size!");
-                                                       // Thread.Sleep(1000);
-                                                        break;
-                                                    }
-                                                    else
-                                                    {
-                                                        SendMsg("changeSize\n" + size, ID_choice);
-                                                    }
-
-                                                }
-                                                catch (Exception)
-                                                {
-
-
-                                                }
-                                            }
-
-
-                                            break;
-                                        }
-                                    case 2:
-                                        {
-                                           // Console.WriteLine("In process");
-                                            //Thread.Sleep(1000);
-                                            break;
-                                        }
-                                    default:
-                                        break;
-                                }
-                            }
-                            catch (Exception)
-                            {
-
-                               // Console.WriteLine("You can entry only numbs!");
-                               // Thread.Sleep(1000);
-                            }
-
+                            Json(ID_choice);
                             break;
                         }
                     default:
-                        //Console.WriteLine("There isnt this action!");
-                        //Thread.Sleep(1000);
-                       // Console.Clear();
+                       
                         break;
                 }
-            }
+           
         }
         public void SendBrowser(int choice)
         {
@@ -321,15 +240,10 @@ namespace ServerProject
                     break;
             }
         }
-        public void ShowAllClients()
+        public void Json(int ID_choice)
         {
-            lock (clients)
-            {
-                foreach (var item in clients)
-                {
-                   // Console.WriteLine($"<ID: {item.ID}> " + $"Connected: {item.socket.Connected}");
-                }
-            }
+            SendMsg("json\n", ID_choice);
+            GetMsgFromOne(ID_choice);
         }
         public void SearchFiles(int ID_choice)
         {

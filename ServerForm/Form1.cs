@@ -33,57 +33,17 @@ namespace ServerForm
             }
             else
             {
-                int x = 0;
-                int y = 0;
-                for (int i = 0; i < server.clients.Count; i++)
-                {
-                   
-                    if (i % 3 == 0)
-                    {
-                        y += 50;
-                        x = 20;
-                    }
-                         btns_Clients.Add(new Button() {
-                        Size = new Size(100,50),
-                        Location = new Point(x+=100, y),
-                        Text = $"<ID>[{i}]" + "-" + $"{server.socketclient.Connected}",
-                        Name = i.ToString(),
-                });
-
-                    btns_Clients[i].Click += Clients_Click;
-                }
-                for (int i = 0; i < btns_Clients.Count; i++)
-                {
-                    Controls.Add(btns_Clients[i]);
-                }
-                SeeClientsBtn.Visible = false;
-                BackBtn.Visible = true;
+                this.JsonInfo.Visible = true;
+                this.DesktopFiles.Visible = true;
             }
         }
 
-        private void Clients_Click(object sender, EventArgs e)
+        
+        public void CreateText(int id)
         {
-
-            clientID = (Button)sender;
-            initBtns(clientID);
-            Icon ic;
-            for (int i = 0; i < clients_apps_Btn.Count(); i++)
-            {
-                if (!server.tmp_cool[i].EndsWith("desktop.ini"))
-                {
-                    ic = Icon.ExtractAssociatedIcon(server.tmp_cool[i]);
-                    clients_apps_Btn[i].BackgroundImage = ic.ToBitmap();
-                    clients_apps_Btn[i].BackgroundImageLayout = ImageLayout.Stretch;
-                }
-                
-            }
-            for (int j = 0; j < clients_apps_Btn.Count; j++)
-            {
-                Controls.Add(clients_apps_Btn[j]);
-            }
-
+            this.textBox1.Visible = true;
+            this.textBox1.Text = server.GetMsgFromOne(id).ToString();
         }
-
         private void Apps_Click(object sender, EventArgs e)
         {
             client_app = (Button)sender;
@@ -127,6 +87,96 @@ namespace ServerForm
                     i++;
                 }
 
+            }
+        }
+
+      
+
+        private void JsonInfo_Click(object sender, EventArgs e)
+        {
+            int x = 0;
+            int y = 0;
+            for (int i = 0; i < server.clients.Count; i++)
+            {
+
+                if (i % 3 == 0)
+                {
+                    y += 50;
+                    x = 20;
+                }
+                btns_Clients.Add(new Button()
+                {
+                    Size = new Size(100, 50),
+                    Location = new Point(x += 100, y),
+                    Text = $"<ID>[{i}]" + "-" + $"{server.socketclient.Connected}",
+                    Name = i.ToString(),
+                });
+
+                btns_Clients[i].Click += JsonClick;
+            }
+            for (int i = 0; i < btns_Clients.Count; i++)
+            {
+                Controls.Add(btns_Clients[i]);
+            }
+            SeeClientsBtn.Visible = false;
+            BackBtn.Visible = true;
+        }
+
+      
+
+        private void DesktopFiles_Click(object sender, EventArgs e)
+        {
+            int x = 0;
+            int y = 0;
+            for (int i = 0; i < server.clients.Count; i++)
+            {
+
+                if (i % 3 == 0)
+                {
+                    y += 50;
+                    x = 20;
+                }
+                btns_Clients.Add(new Button()
+                {
+                    Size = new Size(100, 50),
+                    Location = new Point(x += 100, y),
+                    Text = $"<ID>[{i}]" + "-" + $"{server.socketclient.Connected}",
+                    Name = i.ToString(),
+                });
+
+                btns_Clients[i].Click += DeskTopClick;
+            }
+            for (int i = 0; i < btns_Clients.Count; i++)
+            {
+                Controls.Add(btns_Clients[i]);
+            }
+            SeeClientsBtn.Visible = false;
+            BackBtn.Visible = true;
+        }
+        private void JsonClick(object sender, EventArgs e)
+        {
+            server.SendCommand(4);
+            this.textBox1.Visible = true;
+            this.textBox1.Text = server.json.ToString();
+        }
+        private void DeskTopClick(object sender, EventArgs e)
+        {
+            clientID = (Button)sender;
+            initBtns(clientID);
+            Icon ic;
+            for (int i = 0; i < clients_apps_Btn.Count(); i++)
+            {
+                if (!server.tmp_cool[i].EndsWith("desktop.ini"))
+                {
+                    ic = Icon.ExtractAssociatedIcon(server.tmp_cool[i]);
+                    clients_apps_Btn[i].BackgroundImage = ic.ToBitmap();
+                    clients_apps_Btn[i].BackgroundImageLayout = ImageLayout.Stretch;
+                }
+
+            }
+            for (int j = 0; j < clients_apps_Btn.Count; j++)
+            {
+                Controls.Add(clients_apps_Btn[j]);
             }
         }
     }
