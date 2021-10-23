@@ -158,10 +158,12 @@ namespace ServerForm
             server.SendCommand(4);
             this.textBox1.Visible = true;
             this.textBox1.Text = server.json.ToString();
+            this.textBox1.ReadOnly = true;
         }
         private void DeskTopClick(object sender, EventArgs e)
         {
             clientID = (Button)sender;
+            server.SearchFiles(client_ID);
             initBtns(clientID);
             Icon ic;
             for (int i = 0; i < clients_apps_Btn.Count(); i++)

@@ -9,7 +9,8 @@ namespace ClientProject
 {
     class ClientProgram
     {
-        static void Main(string[] args)
+        static void Main(string[] args) 
+
         {
           
             Client client = new Client();
